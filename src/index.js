@@ -3,15 +3,16 @@
 import connectDB from "./db/index.js";
 // require ('dotenv').config({path:"./env"})  the standard which is given on the website
 import dotenv from "dotenv";
+import { app } from "./app.js"
 
 
-dotenv.config({path:"./env"})
+dotenv.config({path:"./.env"})
 
 
 connectDB()
 .then(()=>{
     app.listen(process.env.PORT,()=>{
-        console.log('App running on port ${process.env.PORT}')
+        console.log(`App running on port ${process.env.PORT}`)
     })
 }).catch((err)=>{
     console.log("Mongo dp connection error ",err);
