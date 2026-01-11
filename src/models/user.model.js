@@ -1,6 +1,6 @@
 import mongoose ,{Schema} from "mongoose";
 import jwt from "jsonwebtoken";
-import bcrypt from "becrypt";
+import bcrypt from "bcrypt";
 
 
 const userSchema = new Schema(
@@ -61,12 +61,19 @@ const userSchema = new Schema(
 
 )
 
-userSchema.pre("save",async function(next){
+userSchema.pre("save",async function(next){//next in function furtuher needed
     if (!this.isModified("password")) {
-        return next;
-    }
-    this.password= await bcrypt.hash(this.password,10)
-    next()
+        // return next();
+        return next ();
+    }//sir syntax was direclty this.password= awiat 
+    try {
+        this.password= await bcrypt.hash(this.password,10)
+    } catch (error) {
+
+      console.log(error);
+      next(error);  
+    } //to use next i have use try catch 
+    // next()
 })
 
 userSchema.methods.isPasswordCorrect= async function (password) {
