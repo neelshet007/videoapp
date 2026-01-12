@@ -61,10 +61,10 @@ const userSchema = new Schema(
 
 )
 
-userSchema.pre("save",async function(next){//next in function furtuher needed
+userSchema.pre("save",async function(){//next in function furtuher needed
     if (!this.isModified("password")) {
         // return next();
-        return next ();
+        return ;
     }//sir syntax was direclty this.password= awiat 
     try {
         this.password= await bcrypt.hash(this.password,10)

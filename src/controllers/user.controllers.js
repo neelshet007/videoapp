@@ -4,9 +4,9 @@ import {User} from "../models/user.model.js"
 import { uploadOnCloudinary } from "../utils/cloudinary.js"
 import { ApiResponse } from "../utils/apiResponse.js"
 
-const generateRefreshTokenAndRefreshToken = async(userId)=>{
+const generateRefreshTokenAndAccessToken = async(userId)=>{
     try {
-        await User.findById(userId)
+        const user = await User.findById(userId)
         const accessToken = user.generateAccessToken()
         const refreshToken = user.generateRefreshToken()
         user.refreshToken = refreshToken
@@ -15,6 +15,7 @@ const generateRefreshTokenAndRefreshToken = async(userId)=>{
         return {accessToken,refreshToken}        
 
     } catch (error) {
+        console.log("ACTUAL ERROR:", error);
         throw new ApiError(500,"Something went wrong while genearting refresh and access token ")
     }
 }
@@ -100,7 +101,8 @@ const registerUser = asyncHandler(async (req,res) => {
 
 const loginUser = asyncHandler(async (req,res) => {
     const {email,username,password}= req.body
-    if (!username || !email) {
+    console.log(email);
+    if (!username &&         !email) {
         throw new ApiError(400,"username or email is required");
         
     }
@@ -119,7 +121,7 @@ const loginUser = asyncHandler(async (req,res) => {
         throw new ApiError(401,"Invlaid user credentials  ")
     }
 
-    const {accessToken,refreshToken}= await generateRefreshTokenAndRefreshToken(user._id)
+    const {accessToken,refreshToken}= await generateRefreshTokenAndAccessToken(user._id)
 
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
 
@@ -171,6 +173,8 @@ const logoutUser = asyncHandler(async (req,res) => {
 
 
 })
+
+
 
 export {
     registerUser,
